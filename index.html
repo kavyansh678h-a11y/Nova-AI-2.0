@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nova AI 2.0</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+
+    <header>
+      <h1>Nova AI 🤖</h1>
+      <p>Your personal intelligent assistant</p>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab active" onclick="showTab('chat', this)">Chat</button>
+      <button class="tab" onclick="showTab('analyse', this)">Analyse</button>
+      <button class="tab" onclick="showTab('advisor', this)">Advisor</button>
+    </nav>
+
+    <!-- CHAT -->
+    <section id="chat" class="panel">
+      <div id="chatMessages" class="messages">
+        <div class="message bot">
+          Hello! I'm Nova AI. What would you like to know?
+        </div>
+      </div>
+
+      <div class="input-area">
+        <input id="chatInput" placeholder="Ask me anything...">
+        <button onclick="sendMessage()">Send</button>
+      </div>
+    </section>
+
+    <!-- PATTERN ANALYSER -->
+    <section id="analyse" class="panel hidden">
+      <h2>🧠 Pattern Analyser</h2>
+      <p>Enter numbers separated by commas.</p>
+
+      <textarea id="numbers" placeholder="Example: 2, 4, 6, 8, 10"></textarea>
+
+      <button class="action" onclick="analysePattern()">
+        Analyse Pattern
+      </button>
+
+      <div id="analysisResult" class="result">
+        Your analysis will appear here.
+      </div>
+    </section>
+
+    <!-- SMART ADVISOR -->
+    <section id="advisor" class="panel hidden">
+      <h2>💡 Smart Advisor</h2>
+      <p>Describe your situation and enter your choices.</p>
+
+      <input id="situation" placeholder="What decision are you making?">
+
+      <textarea id="choices" placeholder="Enter choices separated by commas"></textarea>
+
+      <button class="action" onclick="giveAdvice()">
+        Get Advice
+      </button>
+
+      <div id="adviceResult" class="result">
+        Your advice will appear here.
+      </div>
+    </section>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

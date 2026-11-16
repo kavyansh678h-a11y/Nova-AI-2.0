@@ -1,0 +1,74 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #101525;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+.app {
+  max-width: 650px;
+  margin: auto;
+  padding: 16px;
+}
+
+header {
+  text-align: center;
+  padding: 15px 5px;
+}
+
+header h1 {
+  color: #61a8ff;
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+header p {
+  color: #bdc9dc;
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin: 15px 0;
+}
+
+.tab {
+  flex: 1;
+  background: #25334d;
+  color: white;
+}
+
+.tab.active {
+  background: #2589e8;
+}
+
+button {
+  border: none;
+  border-radius: 10px;
+  padding: 13px;
+  color: white;
+  background: #2589e8;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.panel {
+  background: #1a2338;
+  border-radius: 15px;
+  padding: 16px;
+  min-height: 55vh;
+}
+
+.hidden {
+  display: none;
+}
+
+.messages {
+  height: 45vh;
+  min-height: 250px;
+  overflow-y: auto;
+}

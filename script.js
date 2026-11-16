@@ -1,4 +1,7 @@
-// NOVA AI 2.0
+
+// =================================
+// NOVA AI 2.0 - COMPLETE JAVASCRIPT
+// =================================
 
 // SWITCH BETWEEN FEATURES
 function showTab(id, button) {
@@ -18,7 +21,6 @@ function showTab(id, button) {
 // CHAT ASSISTANT
 function sendMessage() {
   const input = document.getElementById("chatInput");
-  const chat = document.getElementById("chatMessages");
   const question = input.value.trim();
 
   if (!question) return;
@@ -50,26 +52,30 @@ function getAnswer(question) {
   }
 
   if (q.includes("who are you")) {
-    return "I'm Nova AI 2.0, your personal assistant with chat, pattern analysis and advice tools.";
+    return "I'm Nova AI 2.0, your personal assistant with Chat, Pattern Analysis and Smart Advisor.";
   }
 
   if (q.includes("pattern")) {
-    return "Open the Analyse tab, enter numbers separated by commas, and I'll look for patterns.";
+    return "Open the Analyse tab and enter numbers separated by commas.";
   }
 
   if (q.includes("advice")) {
-    return "Open the Advisor tab, describe your situation and enter your choices. I'll help compare them.";
+    return "Open the Advisor tab and describe your situation and choices.";
   }
 
   if (q.includes("how are you")) {
-    return "I'm ready to help! What would you like to explore?";
+    return "I'm doing great! Ready to help you.";
   }
 
   if (q.includes("thank")) {
-    return "You're welcome! Let me know if you need anything else.";
+    return "You're welcome! Ask me anything else.";
   }
 
-  return "That's an interesting question! My current chat version has limited built-in knowledge. Try asking about Nova AI, or use my Analyse and Advisor tools.";
+  if (q.includes("math")) {
+    return "I can help with basic mathematical questions. Try my Pattern Analyser too!";
+  }
+
+  return "That's an interesting question! My current version has limited built-in knowledge, but I'm ready to help.";
 }
 
 // PATTERN ANALYSER
@@ -95,3 +101,91 @@ function analysePattern() {
   const average = sum / nums.length;
   const min = Math.min(...nums);
   const max = Math.max(...nums);
+
+  const differences = [];
+
+  for (let i = 1; i < nums.length; i++) {
+    differences.push(nums[i] - nums[i - 1]);
+  }
+
+  let pattern = "No simple arithmetic pattern detected.";
+  let next = "Cannot predict confidently.";
+
+  if (differences.every(d => d === differences[0])) {
+    pattern = "Arithmetic pattern detected.";
+    next = nums[nums.length - 1] + differences[0];
+  } else if (nums.every((n, i) => i === 0 || n > nums[i - 1])) {
+    pattern = "Increasing sequence detected.";
+  } else if (nums.every((n, i) => i === 0 || n < nums[i - 1])) {
+    pattern = "Decreasing sequence detected.";
+  }
+
+  result.innerHTML =
+    "<h3>Analysis Result</h3>" +
+    "<p><b>Pattern:</b> " + pattern + "</p>" +
+    "<p><b>Next number:</b> " + next + "</p>" +
+    "<p><b>Sum:</b> " + sum + "</p>" +
+    "<p><b>Average:</b> " + average.toFixed(2) + "</p>" +
+    "<p><b>Minimum:</b> " + min + "</p>" +
+    "<p><b>Maximum:</b> " + max + "</p>";
+}
+
+// SMART ADVISOR
+function giveAdvice() {
+  const situation = document.getElementById("situation").value.trim();
+  const choicesInput = document.getElementById("choices").value.trim();
+  const result = document.getElementById("adviceResult");
+
+  if (!situation || !choicesInput) {
+    result.textContent = "Please enter your situation and choices.";
+    return;
+  }
+
+  const choices = choicesInput
+    .split(",")
+    .map(choice => choice.trim())
+    .filter(choice => choice.length > 0);
+
+  if (choices.length < 2) {
+    result.textContent = "Please enter at least two choices.";
+    return;
+  }
+
+  let advice = "<h3>Nova's Advice 💡</h3>";
+
+  advice += "<p><b>Your situation:</b> " +
+    escapeHTML(situation) + "</p>";
+
+  advice += "<p><b>Your available choices:</b></p><ul>";
+
+  choices.forEach(choice => {
+    advice += "<li>" + escapeHTML(choice) + "</li>";
+  });
+
+  advice += "</ul>";
+
+  advice += "<p>Compare these choices based on:</p>";
+  advice += "<ul>";
+  advice += "<li>Your main goal</li>";
+  advice += "<li>Advantages and disadvantages</li>";
+  advice += "<li>Time and effort required</li>";
+  advice += "<li>Long-term benefits</li>";
+  advice += "</ul>";
+
+  advice += "<p><b>Nova recommends:</b> Choose the option that best matches your goals and priorities after comparing these factors.</p>";
+
+  result.innerHTML = advice;
+}
+
+// SAFE TEXT DISPLAY
+function escapeHTML(text) {
+  return text.replace(/[&<>"']/g, function(char) {
+    return {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    }[char];
+  });
+}

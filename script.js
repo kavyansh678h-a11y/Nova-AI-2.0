@@ -65,7 +65,7 @@ function getAnswer(question) {
 
   if (q.includes("how are you")) {
     return "I'm doing great! Ready to help you.";
-  }
+    }
 
   if (q.includes("thank")) {
     return "You're welcome! Ask me anything else.";
@@ -189,3 +189,4 @@ function escapeHTML(text) {
     }[char];
   });
 }
+

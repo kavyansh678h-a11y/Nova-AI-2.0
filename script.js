@@ -18,19 +18,77 @@ function showTab(id, button) {
   button.classList.add("active");
 }
 
-// CHAT ASSISTANT
-function sendMessage() {
+// CHAT ASSISTANT - NOVA AI 3.0
+
+let conversationHistory = [];
+
+async function sendMessage() {
   const input = document.getElementById("chatInput");
   const question = input.value.trim();
 
   if (!question) return;
 
   addMessage(question, "user");
-
-  const answer = getAnswer(question);
-  addMessage(answer, "bot");
-
   input.value = "";
+
+  // Keep the conversation within backend limits
+  while (conversationHistory.length >= 10) {
+    conversationHistory.shift();
+  }
+
+  conversationHistory.push({
+    role: "user",
+    content: question
+  });
+
+  const chat = document.getElementById("chatMessages");
+  const loading = document.createElement("div");
+
+  loading.className = "message bot";
+  loading.textContent = "Nova is thinking...";
+  chat.appendChild(loading);
+  chat.scrollTop = chat.scrollHeight;
+
+  try {
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        messages: conversationHistory
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "AI request failed");
+    }
+
+    if (typeof data.reply !== "string" || !data.reply.trim()) {
+      throw new Error("Empty AI response");
+    }
+
+    loading.textContent = data.reply;
+
+    conversationHistory.push({
+      role: "assistant",
+      content: data.reply
+    });
+
+    while (conversationHistory.length > 10) {
+      conversationHistory.shift();
+    }
+
+  } catch (error) {
+    loading.textContent =
+      "Sorry! Nova couldn't connect to its AI brain. Please try again.";
+
+    console.error("Nova AI error:", error);
+  }
+
+  chat.scrollTop = chat.scrollHeight;
 }
 
 function addMessage(text, type) {
@@ -42,40 +100,6 @@ function addMessage(text, type) {
 
   chat.appendChild(message);
   chat.scrollTop = chat.scrollHeight;
-}
-
-function getAnswer(question) {
-  const q = question.toLowerCase();
-
-  if (q.includes("hello") || q.includes("hi")) {
-    return "Hello! I'm Nova AI. How can I help you today?";
-  }
-
-  if (q.includes("who are you")) {
-    return "I'm Nova AI 2.0, your personal assistant with Chat, Pattern Analysis and Smart Advisor.";
-  }
-
-  if (q.includes("pattern")) {
-    return "Open the Analyse tab and enter numbers separated by commas.";
-  }
-
-  if (q.includes("advice")) {
-    return "Open the Advisor tab and describe your situation and choices.";
-  }
-
-  if (q.includes("how are you")) {
-    return "I'm doing great! Ready to help you.";
-    }
-
-  if (q.includes("thank")) {
-    return "You're welcome! Ask me anything else.";
-  }
-
-  if (q.includes("math")) {
-    return "I can help with basic mathematical questions. Try my Pattern Analyser too!";
-  }
-
-  return "That's an interesting question! My current version has limited built-in knowledge, but I'm ready to help.";
 }
 
 // PATTERN ANALYSER

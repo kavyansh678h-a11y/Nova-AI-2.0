@@ -1,0 +1,114 @@
+
+const ALLOWED_ORIGIN = "https://kavyansh678h-a11y.github.io";
+
+const MODEL = "@cf/qwen/qwen3.8-27b";
+
+const SYSTEM_PROMPT = `
+You are Nova AI 3.0, a helpful and intelligent personal assistant.
+
+Your abilities:
+1. Answer questions clearly and accurately.
+2. Explain difficult topics simply.
+3. Analyse information.
+4. Compare choices.
+5. Maintain conversation context.
+
+Rules:
+- Be friendly and respectful.
+- Never invent facts.
+- Admit uncertainty.
+- Keep answers concise and useful.
+`;
+
+function corsHeaders(origin) {
+  return {
+    "Access-Control-Allow-Origin": origin,
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Content-Type": "application/json"
+  };
+}
+
+function jsonResponse(data, status, origin) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: corsHeaders(origin)
+  });
+}
+
+export async function onRequest(context) {
+  const { request, env } = context;
+  const origin = request.headers.get("Origin");
+
+  if (origin !== ALLOWED_ORIGIN) {
+    return new Response("Origin not allowed", { status: 403 });
+  }
+
+  if (request.method === "OPTIONS") {
+    return new Response(null, {
+      status: 204,
+      headers: corsHeaders(origin)
+    });
+  }
+
+  if (request.method !== "POST") {
+    return jsonResponse({ error: "Use POST." }, 405, origin);
+  }
+
+  try {
+    const body = await request.json();
+
+    if (!Array.isArray(body.messages) ||
+        body.messages.length < 1 ||
+        body.messages.length > 10) {
+      return jsonResponse({ error: "Invalid messages." }, 400, origin);
+    }
+
+    const messages = [];
+
+    for (const message of body.messages) {
+      if (
+        !message ||
+        !["user", "assistant"].includes(message.role) ||
+        typeof message.content !== "string" ||
+        message.content.length > 3000
+      ) {
+        return jsonResponse({ error: "Invalid message format." }, 400, origin);
+      }
+
+      messages.push({
+        role: message.role,
+        content: message.content
+      });
+    }
+
+    if (messages[messages.length - 1].role !== "user") {
+      return jsonResponse({ error: "Last message must be from user." }, 400, origin);
+    }
+
+    const result = await env.AI.run(MODEL, {
+      messages: [
+        { role: "system", content: SYSTEM_PROMPT },
+        ...messages
+      ],
+      max_tokens: 700,
+      temperature: 0.6
+    });
+
+    const answer =
+      result.response ||
+      result.output_text ||
+      result.text;
+
+    if (typeof answer !== "string" || !answer.trim()) {
+      throw new Error("Empty AI response");
+    }
+
+    return jsonResponse({ reply: answer }, 200, origin);
+
+  } catch (error) {
+    return jsonResponse({
+      error: "Nova AI could not process your request. Please try again."
+    }, 500, origin);
+  }
+}

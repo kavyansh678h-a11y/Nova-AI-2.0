@@ -1,5 +1,5 @@
 
-const ALLOWED_ORIGIN = "https://kavyansh678h-a11y.github.io";
+const ALLOWED_ORIGIN = "https://nova-ai-2-0.pages.dev";
 
 const MODEL = "@cf/qwen/qwen3.8-27b";
 

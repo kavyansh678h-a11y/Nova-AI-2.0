@@ -60,11 +60,21 @@ async function sendMessage() {
       })
     });
 
-    const data = await response.json();
+    const raw = await response.text();
 
-    if (!response.ok) {
-      throw new Error(data.error || "AI request failed");
-    }
+let data = {};
+
+try {
+  data = raw ? JSON.parse(raw) : {};
+} catch {
+  throw new Error(
+    `Invalid server response (HTTP ${response.status}): ${raw.slice(0, 200) || "Empty response"}`
+  );
+}
+
+if (!response.ok) {
+  throw new Error(data.error || `HTTP ${response.status}`);
+}
 
     if (typeof data.reply !== "string" || !data.reply.trim()) {
       throw new Error("Empty AI response");

@@ -82,11 +82,10 @@ async function sendMessage() {
     }
 
   } catch (error) {
-    loading.textContent =
-      "Sorry! Nova couldn't connect to its AI brain. Please try again.";
+  loading.textContent = "Debug Error: " + error.message;
 
-    console.error("Nova AI error:", error);
-  }
+  console.error("Nova AI error:", error);
+}
 
   chat.scrollTop = chat.scrollHeight;
 }

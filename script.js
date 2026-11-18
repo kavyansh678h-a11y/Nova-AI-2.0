@@ -73,7 +73,9 @@ try {
 }
 
 if (!response.ok) {
-  throw new Error(data.error || `HTTP ${response.status}`);
+  throw new Error(
+    `HTTP ${response.status}: ${raw.slice(0, 300) || "Empty response"}`
+  );
 }
 
     if (typeof data.reply !== "string" || !data.reply.trim()) {

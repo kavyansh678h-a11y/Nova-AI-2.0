@@ -107,8 +107,7 @@ export async function onRequest(context) {
     return jsonResponse({ reply: answer }, 200, origin);
 
   } catch (error) {
-    return jsonResponse({
-      error: "Nova AI could not process your request. Please try again."
-    }, 500, origin);
-  }
+  return jsonResponse({
+    error: error.message || "Unknown backend error"
+  }, 500, origin);
 }
